@@ -1,0 +1,15 @@
+*.egg-info
+*.pyc
+.tox
+dist/
+__pycache__
+.coverage
+.idea/
+cov_html/
+venv/
+README.html
+build/
+htmlcov/
+*.swp
+.python-version
+.vscode/

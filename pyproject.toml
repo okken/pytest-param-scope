@@ -1,0 +1,29 @@
+[project]
+name = "pytest-param-scope"
+authors = [{name = "Brian Okken"}]
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+description="pytest parametrize scope fixture workaround"
+version = "0.0.1"
+requires-python = ">=3.7"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Framework :: Pytest" ,
+]
+dependencies = ["pytest"]
+
+[project.urls]
+Home = "https://github.com/okken/pytest-param-scope"
+
+[project.entry-points.pytest11]
+check = "pytest_param_scope.plugin"
+
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.module]
+name = "pytest_param_scope"
+
+[tool.flit.sdist]
+include = ["changelog.md", "examples", "tests", "tox.ini"]
