@@ -90,6 +90,26 @@ The implementation is a total hack and relies on global variables and looking up
 
 * With `pytest-repeat`: This actually works great with `pytest-repeat`, as repeat works by generating parametrized tests.
 
+## FAQ
+
+### Why not just use existing fixture scopes?
+
+There isn't a scope that quite fits.
+
+* Function: runs setup before and after each parametrized test case.
+* Class: Kinda works if you put only one function in a test class.
+* Module: Too wide.
+* Session: Way too wide.
+
+I want a setup that runs before all parametrized test cases, and clean up after the last one.
+
+### Why implement this as a plugin and not add this functionality to pytest core?
+
+A couple reasons.
+
+1. I'm not sure we want this funcitonality in core pytest. Playing with it as a plugin will tell us if it's important to people.
+2. Implementing it as a plugin is faster to get it out there and usable.
+
 
 ## Contributing
 

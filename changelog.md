@@ -24,6 +24,8 @@ All notable changes to this project  be documented in this file.
 ### Changed
 
 - Swapped a handful of globals for one global dataclass
+- Added CI
+- Added some FAQ to the README
 
 ## [0.0.1] - 2023-Oct-14
 
