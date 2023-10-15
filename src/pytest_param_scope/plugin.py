@@ -1,85 +1,78 @@
+from __future__ import annotations
 import pytest
+from dataclasses import dataclass
+from typing import Callable, Any
+
 
 def pytest_configure(config):
     config.addinivalue_line(
         'markers',
         'param_scope(setup, teardown): setup and teardown for parametrized tests')
 
-__parametrized_test = None
-__teardown_func = None
-__ready_for_teardown = False
-__setup_value = None
-__exception = None
+
+@dataclass
+class ParamScopeData():
+    test_name: str | None = None
+    teardown_func: Callable | None = None
+    ready_for_teardown: bool = False
+    setup_value: Any = None
+    exception: Exception | None = None
+
+
+# current test run
+__data = ParamScopeData()
+
 
 @pytest.fixture(scope="function")
 def param_scope(request):
-    global __parametrized_test
-    global __teardown_func
-    global __ready_for_teardown
-    global __setup_value
-    global __exception
+    global __data
+
+    setup_func = None
 
     # for "test_foo[1]", we just want "test_foo"
     test_name = request.node.name.split("[")[0]
 
-    if __parametrized_test is None:
+    if __data.test_name is None:
         # this is the first time, so go ahead and call setup,
         # and save the teardown for later
-        setup_func = None
-        teardown_func = None
+        __data.test_name = test_name
 
         m = request.node.get_closest_marker("param_scope")
         if m:
             setup_func = m.args[0]
-            teardown_func = m.args[1]
-
-        __parametrized_test = test_name
+            __data.teardown_func = m.args[1]
 
         if setup_func:
             try:
-                __setup_value = setup_func()
+                __data.setup_value = setup_func()
             except Exception as e:
-                __exception = e
+                __data.exception = 3
                 raise e
-        else:
-            __setup_value = None
-
-        __teardown_func = teardown_func
-        __ready_for_teardown = False
-        __exception = None
     else:
-        if __parametrized_test == test_name:
-            if __exception:
+        if __data.test_name == test_name:
+            if __data.exception:
                 # there was an exception in setup
                 # so we need to Error
-                raise __exception
+                raise  __data.exception
 
-    yield __setup_value
+    yield __data.setup_value
 
-    if __ready_for_teardown:
-        teardown_func = __teardown_func
-
-        # clean up globals
-        __parametrized_test = None
-        __teardown_func = None
-        __ready_for_teardown = False
-        __setup_value = None
-
-        # call teardown
+    if __data.ready_for_teardown:
+        teardown_func = __data.teardown_func
+        __data = ParamScopeData()  # reset for next one
         if teardown_func:
             teardown_func()
 
 
 def pytest_runtest_teardown(item, nextitem):
-    global __ready_for_teardown
-    if __parametrized_test:
-        if nextitem:
-            next_name = nextitem.name.split("[")[0]
-        else:
-            next_name = None
+    # if next is a new name, it's time for teardown
+    if nextitem:
+        next_name = nextitem.name.split("[")[0]
+    else:
+        next_name = None
 
-        if __parametrized_test != next_name:
-            __ready_for_teardown = True
+    if __data.test_name != next_name:
+            __data.ready_for_teardown = True
 
 
 def pytest_itemcollected(item):
