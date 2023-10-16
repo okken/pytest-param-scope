@@ -1,4 +1,6 @@
 from __future__ import annotations
+import types
+from typing import Generator
 import pytest
 from dataclasses import dataclass
 from typing import Callable, Any
@@ -14,6 +16,7 @@ def pytest_configure(config):
 class ParamScopeData():
     test_name: str | None = None
     teardown_func: Callable | None = None
+    teardown_gen: Generator[Any, None, None] | None = None
     ready_for_teardown: bool = False
     setup_value: Any = None
     exception: Exception | None = None
@@ -44,9 +47,19 @@ def param_scope(request):
 
         if setup_func:
             try:
-                __data.setup_value = setup_func()
+                # setup could be a func, or could be a generator
+                setup_value = setup_func()
+                if isinstance(setup_value, types.GeneratorType):
+                    # if generator, call next() once for setup section
+                    new_value = next(setup_value)
+                    __data.setup_value = new_value
+                    # and save it for teardown
+                    __data.teardown_gen = setup_value
+                else:
+                    # otherwise, just save the value
+                    __data.setup_value = setup_value
             except Exception as e:
-                __data.exception = 3
+                __data.exception = e
                 raise e
     else:
         if __data.test_name == test_name:
@@ -58,8 +71,18 @@ def param_scope(request):
     yield __data.setup_value
 
     if __data.ready_for_teardown:
+        teardown_gen = __data.teardown_gen
         teardown_func = __data.teardown_func
+
         __data = ParamScopeData()  # reset for next one
+
+        if teardown_gen:
+            try:
+                next(teardown_gen)
+            except StopIteration:
+                pass # this is expected
+
+        # should we disallow both a teardown from gen and a teardown?
         if teardown_func:
             teardown_func()
 
