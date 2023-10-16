@@ -46,7 +46,7 @@ def param_scope(request):
             try:
                 __data.setup_value = setup_func()
             except Exception as e:
-                __data.exception = 3
+                __data.exception = e
                 raise e
     else:
         if __data.test_name == test_name:
