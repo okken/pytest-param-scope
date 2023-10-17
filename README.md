@@ -8,6 +8,10 @@ The pytest parametrize scope fixture workaround.
 
 There's also a `param_scope` fixture to allow the return value of the setup function to be passed to the test.
 
+**WARNING: this is beta, or more like alpha, and the API ~~may~~ will change before it settles.**
+
+**EXAMPLE: There's an active branch to change the API to allow yield functions (generators) and NOT allow a standalone teardown function.**
+
 ## Installation
 
 From PyPI:
