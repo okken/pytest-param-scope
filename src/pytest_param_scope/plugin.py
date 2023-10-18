@@ -42,8 +42,10 @@ def param_scope(request):
 
         m = request.node.get_closest_marker("param_scope")
         if m:
-            setup_func = m.args[0]
-            __data.teardown_func = m.args[1]
+            if len(m.args) >= 1:
+                setup_func = m.args[0]
+            if len(m.args) >= 2:
+                __data.teardown_func = m.args[1]
 
         if setup_func:
             try:
@@ -82,7 +84,9 @@ def param_scope(request):
             except StopIteration:
                 pass # this is expected
 
+
         # should we disallow both a teardown from gen and a teardown?
+        # for now, I'll allow it, as it's a bit messy to disallow it
         if teardown_func:
             teardown_func()
 
