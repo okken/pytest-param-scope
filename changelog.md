@@ -19,6 +19,12 @@ All notable changes to this project  be documented in this file.
 - nothing so far
 
 -->
+## [0.1.1] - 2023-Oct-18
+
+### Changed
+
+- Added support for `yield` functions for combining setup/teardown.
+
 ## [0.0.3] - 2023-Oct-14
 
 ### Changed
