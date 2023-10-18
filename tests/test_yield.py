@@ -1,7 +1,7 @@
 
 def test_error_during_setup(pytester):
     pytester.copy_example("examples/test_yield.py")
-    result = pytester.runpytest('-v', '-s')
+    result = pytester.runpytest('test_yield.py::test_yield', '-v', '-s')
     result.assert_outcomes(passed=3)
     result.stdout.re_match_lines(
         [
