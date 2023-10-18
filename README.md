@@ -81,6 +81,52 @@ param teardown
 * If an exception occurs in setup, the test will report Error and not run. The teardown will also not run.
 * If an exception occurs in teardown, the LAST parametrized test case to run results in BOTH PASS and Error. This is weird, but consistent with pytest fixtures.
 
+
+## You can combine setup and teardown in one function
+
+You can provide a function separated by a `yield` to put both setup and teardown in one function.
+
+However, there's a trick to doing this:
+
+* Either, pass `None` as the teardown.
+* Or use `with_args`, as in `@pytest.mark.param_scope.with_args(my_func)`
+
+Here's a combo setup/teardown function:
+
+```python
+def setup_and_teardown():
+    print('\nsetup')
+    yield 42
+    print('\nteardown')
+
+```
+
+Calling it with `None` for teardown:
+
+```python
+import pytest
+
+@pytest.mark.param_scope(setup_and_teardown, None)
+@pytest.mark.parametrize('x', ['a', 'b', 'c'])
+def test_yield(x, param_scope):
+    assert param_scope == 42
+
+```
+
+Or using `with_args`:
+
+```python
+@pytest.mark.param_scope.with_args(setup_and_teardown)
+@pytest.mark.parametrize('x', ['a', 'b', 'c'])
+def test_just_one_func(x, param_scope):
+    assert param_scope == 42
+
+```
+
+Both of these examples are in `examples/test_yield.py`.
+
+
+
 ## More examples
 
 Please see `examples` directory in the repo.
