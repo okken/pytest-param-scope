@@ -36,4 +36,3 @@ def test_error_during_teardown(x):
     """
     ...
 
-
