@@ -1,8 +1,18 @@
-Here are the steps on how to make a new release.
+# Build & Deploy
 
-1. Create a `release-VERSION` branch from `upstream/main`.
-2. Update `changelog.md`.
-3. Push the branch to `upstream`.
-4. Once all tests pass, merge the PR.
-5. Once the PR completes, create a Release with a new version tag on GitHub.
-   Version should be in the form of "vx.y.z". ex: v0.9.2
+Note: If you're not Brian, don't try this.
+
+# Modify version
+
+Change the version in pyproject.toml
+
+# Tag
+
+```
+(ok) $ git tag -a v0.1.2 -m 'some message'
+(ok) $ git push --tags
+```
+
+# Release
+
+Go to [new release](https://github.com/okken/pytest-param-scope/releases/new) and manually create one based on the above tag.
