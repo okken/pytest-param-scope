@@ -4,8 +4,8 @@ authors = [{name = "Brian Okken"}]
 readme = "README.md"
 license = {file = "LICENSE.txt"}
 description="pytest parametrize scope fixture workaround"
-version = "0.2.0"
-requires-python = ">=3.7"
+version = "0.2.1"
+requires-python = ">=3.8"
 classifiers = [
     "License :: OSI Approved :: MIT License",
     "Framework :: Pytest" ,
